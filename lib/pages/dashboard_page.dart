@@ -169,11 +169,11 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
-          Text(
+            Text(
             'Premium Utensils for Professional Kitchens',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.9),
+              color: Color.fromRGBO(255, 255, 255, 0.9),
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -206,7 +206,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Color.fromRGBO(0, 0, 0, 0.2),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),

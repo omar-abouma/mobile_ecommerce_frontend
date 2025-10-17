@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-// ONDOA import ya register_page hapa
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_service.dart'; // ✅ IMPORT HII TU
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,25 +20,51 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!_formKey.currentState!.validate()) return;
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _isLoading = true;
+    });
 
-      setState(() {
-        _isLoading = false;
-      });
+    try {
+      // ✅ BADILISHA HII SEHEMU TU
+      final data = await AuthService.login(
+        _usernameController.text.trim(),
+        _passwordController.text,
+      );
+      
+      await AuthService.saveTokens(data);
 
       if (!mounted) return;
-
-      // Navigate to Dashboard after successful login
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Welcome ${data['username']}!'),
+          backgroundColor: Colors.green.shade600,
+        ),
+      );
+      
       Navigator.pushReplacementNamed(context, '/dashboard');
+      
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red.shade600,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
+  // 🔥 YOTE HII IMEBAAKI VIVYO HIVYO - USIBADILISHE
   void _togglePasswordVisibility() {
     setState(() {
       _obscurePassword = !_obscurePassword;
@@ -146,6 +175,15 @@ class _LoginPageState extends State<LoginPage> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey.shade600,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Server: 127.0.0.1:8000', // ✅ LOCALHOST
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green.shade700,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
@@ -285,5 +323,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

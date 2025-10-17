@@ -143,7 +143,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                           ),
                           const SizedBox(height: 10),
                           DropdownButtonFormField<String>(
-                            value: _orderType,
+                            initialValue: _orderType,
                             items: const [
                               DropdownMenuItem(value: 'pcs', child: Text('Pcs')),
                               DropdownMenuItem(value: 'set', child: Text('Set')),
